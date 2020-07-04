@@ -8,14 +8,15 @@ using namespace std;
 
 int main() 
 {
-    if (runSimpleTests(SELECTED_TESTS)) {
+    if (runSimpleTests(NO_TESTS)) {
         return 0;
     }
 
-    findPerfects(80000);
+    //findPerfects(80000);
     // Comment out the above line and uncomment below line 
     // to switch between running perfect.cpp and soundex.cpp
-    //soundexSearch("res/surnames.txt");
+
+    soundexSearch("res/surnames.txt");
 
     return 0;
 }
