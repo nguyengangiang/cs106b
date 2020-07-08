@@ -117,12 +117,12 @@ string truncate(string s) {
 string soundex(string s) {
     string result = "";
     s = removeNonLetters(s);
-    result += toUpperCase(s[0]);
-    for (int i = 1; i < s.length(); i++) {
+    for (int i = 0; i < s.length(); i++) {
         char c = encodeLetterAsDigit(s[i]);
         result += c;
     }
     result = removeAdjecentRepeatedDigit(result);
+    result[0] = toUpperCase(s[0]);
     result = removeZeros(result);
     if (result.length() < 4) {
         return padding(result);
