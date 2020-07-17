@@ -14,12 +14,28 @@
 #include "search.h"
 using namespace std;
 
-/* TODO: Replace this comment with a descriptive function
- * header comment.
+/* Helper fundtion trim the word down to want we want to store
+ * in our index. Remove any tokens that are not letter
  */
 string cleanToken(string token) {
-    /* TODO: Fill in the remainder of this function. */
-    return "";
+    int numAlpha = 0;
+    for (char ch : token) {
+        if(isalpha(ch)) {
+            numAlpha++;
+        }
+    }
+    if (numAlpha == 0) {
+        return "";
+    }
+    char start = token[0];
+    char end = token[token.length() - 1];
+    if(ispunct(start)) {
+        token = token.substr(1);
+    }
+    if (ispunct(end)) {
+        token = token.erase(token.length()-1, 1);
+    }
+    return toLowerCase(token);
 }
 
 /* TODO: Replace this comment with a descriptive function
@@ -27,7 +43,27 @@ string cleanToken(string token) {
  */
 Map<string, Set<string>> readDocs(string dbfile) {
     Map<string, Set<string>> docs;
-    /* TODO: Fill in the remainder of this function. */
+    ifstream in;
+
+    if (!openFile(in, dbfile))
+        error("Cannot open file named " + dbfile);
+
+    Vector<string> lines;
+    readEntireFile(in, lines);
+
+    for (int i = 0; i < lines.size(); i++) {
+        if(i % 2 == 1) {
+            Set<string> tokens;
+            Vector<string> words = stringSplit(lines[i], " ");
+            for (string s : words) {
+                s = cleanToken(s);
+                if (s.length() > 0) {
+                    tokens.add(s);
+                }
+            }
+            docs.add(lines[i - 1], tokens);
+        }
+    }
     return docs;
 }
 
@@ -36,7 +72,11 @@ Map<string, Set<string>> readDocs(string dbfile) {
  */
 Map<string, Set<string>> buildIndex(Map<string, Set<string>>& docs) {
     Map<string, Set<string>> index;
-    /* TODO: Fill in the remainder of this function. */
+    for (string key : docs.keys()) {
+        for (string s : docs.get(key)) {
+            index[s].add(key);
+        }
+    }
     return index;
 }
 
