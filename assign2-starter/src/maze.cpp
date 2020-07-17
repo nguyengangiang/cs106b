@@ -97,6 +97,7 @@ Stack<GridLocation> solveMaze(Grid<bool>& maze) {
     Set<GridLocation> visited;
     while(!paths.isEmpty()) {
         Stack<GridLocation> cur = paths.dequeue();
+        MazeGraphics::highlightPath(cur, "blue");
         if (cur.peek() == exit) {
             return cur;
         } else {
@@ -148,12 +149,17 @@ void readMazeFile(string filename, Grid<bool>& maze) {
     maze.resize(numRows, numCols);     // resize grid dimensions
 
     for (int r = 0; r < numRows; r++) {
+        if(lines[r].length() != numCols) {
+            error("Maze row does not have the same length");
+        }
         for (int c = 0; c < numCols; c++) {
             char ch = lines[r][c];
             if (ch == '@') {        // wall
                 maze[r][c] = false;
             } else if (ch == '-') { // corridor
                 maze[r][c] = true;
+            } else {
+                error("Not a valid option for a location");
             }
         }
     }
@@ -338,4 +344,14 @@ PROVIDED_TEST("readMazeFile on malformed file should raise an error") {
     Grid<bool> g;
 
     EXPECT_ERROR(readMazeFile("res/malformed.maze", g));
+}
+
+STUDENT_TEST("ReadMazeFile should raise an error") {
+    Grid<bool> g;
+    EXPECT_ERROR(readMazeFile("res/test1.maze", g));
+}
+
+STUDENT_TEST("ReadMazeFile should raise an error") {
+    Grid<bool> g;
+    EXPECT_ERROR(readMazeFile("res/test2.maze", g));
 }
