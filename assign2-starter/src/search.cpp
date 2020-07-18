@@ -12,10 +12,11 @@
 #include "simpio.h"
 #include "strlib.h"
 #include "search.h"
+
 using namespace std;
 
-/* Helper fundtion trim the word down to want we want to store
- * in our index. Remove any tokens that are not letter
+/* Helper fundtion trims the word down to want we want to store
+ * in our index. Removes any token that are not letter
  */
 string cleanToken(string token) {
     int numAlpha = 0;
@@ -38,8 +39,9 @@ string cleanToken(string token) {
     return toLowerCase(token);
 }
 
-/* TODO: Replace this comment with a descriptive function
- * header comment.
+/* Reads from a file line by line and builds a map from an
+ * URL to a Set<string> representing the unique words
+ * that show up on the page
  */
 Map<string, Set<string>> readDocs(string dbfile) {
     Map<string, Set<string>> docs;
@@ -67,8 +69,8 @@ Map<string, Set<string>> readDocs(string dbfile) {
     return docs;
 }
 
-/* TODO: Replace this comment with a descriptive function
- * header comment.
+/* Builds invert data index that map from each word to a set
+ * of URLs that contains that word
  */
 Map<string, Set<string>> buildIndex(Map<string, Set<string>>& docs) {
     Map<string, Set<string>> index;
@@ -80,12 +82,27 @@ Map<string, Set<string>> buildIndex(Map<string, Set<string>>& docs) {
     return index;
 }
 
-/* TODO: Replace this comment with a descriptive function
- * header comment.
+/* Give users the ability to query search and receive data back
+ * The query string argument can either be a single search term
+ * or a compound sequence of multiple terms
  */
 Set<string> findQueryMatches(Map<string, Set<string>>& index, string query) {
     Set<string> result;
-    /* TODO: Fill in the remainder of this function. */
+    Vector<string> words = stringSplit(query, " ");
+    for (string s : words){
+        if (s[0] == '+') {
+            s = cleanToken(s);
+            Set<string> temp = index[s];
+            result *= temp;
+        } else if (s[0] == '-') {
+            s = cleanToken(s);
+            Set<string> temp = index[s];
+            result -= temp;
+        } else {
+            Set<string> temp = index[s];
+            result += temp;
+        }
+    }
     return result;
 }
 
@@ -93,7 +110,19 @@ Set<string> findQueryMatches(Map<string, Set<string>>& index, string query) {
  * header comment.
  */
 void searchEngine(string dbfile) {
-    /* TODO: Fill in the remainder of this function. */
+    cout << "Stand by while building index" << endl;
+    Map<string, Set<string>> data = readDocs(dbfile);
+    Map<string, Set<string>> index = buildIndex(data);
+    cout << "Indexed " << data.size() << " pages, containing " << index.size() << " unique terms" << endl;
+    while (true) {
+        string query = getLine("Enter query sentence (RETURN/ENTER to quit): ");
+        if (query == "") {
+            break;
+        }
+        Set<string> queryMatches = findQueryMatches(index, query);
+        cout << "Found " << queryMatches.size() << " matching pages" << endl;
+        cout << queryMatches << endl;
+    }
 }
 
 
@@ -156,5 +185,13 @@ PROVIDED_TEST("findQueryMatches from tiny.txt, compound queries") {
     EXPECT_EQUAL(matchesRedWithoutFish.size(), 1);
 }
 
+STUDENT_TEST("cleanToken with punctuation in the middle") {
+    EXPECT_EQUAL(cleanToken("as-is"), "as-is");
+    EXPECT_EQUAL(cleanToken("h3ll0"), "h3ll0");
+    EXPECT_EQUAL(cleanToken("wow!"), "wow");
+}
 
-// TODO: add your test cases here
+STUDENT_TEST("readDocs from website.txt, contains 50 documents") {
+    Map<string, Set<string>> docs = readDocs("res/website.txt");
+    EXPECT_EQUAL(docs.size(), 50);
+}

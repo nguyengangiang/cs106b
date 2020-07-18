@@ -11,13 +11,13 @@ using namespace std;
 
 int main()
 {
-    if (runSimpleTests(SELECTED_TESTS)) {
+    if (runSimpleTests(NO_TESTS)) {
         return 0;
     }
 
-    Grid<bool> maze;
-    readMazeFile("res/5x7.maze", maze);
-    solveMaze(maze);
+//    Grid<bool> maze;
+//    readMazeFile("res/5x7.maze", maze);
+//    solveMaze(maze);
 
 
     searchEngine("res/website.txt");
