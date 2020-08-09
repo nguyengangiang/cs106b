@@ -11,22 +11,41 @@
 
 using namespace std;
 
-/* 
- * TODO: Replace this comment with a descriptive function
- * header comment.
- */
+/* Returns a string consists only of the bracketing charaters */
 string operatorsOnly(string s) {
-    /* TODO: Fill in the remainder of this function. */
-    return s;
+    if (s.length() == 0) {
+        return s;
+    } else {
+        if (s[0] == '(' || s[0] == ')' || s[0] == '{' || s[0] == '}' || s[0] == '[' || s[0] == ']') {
+            return s[0] + operatorsOnly(s.substr(1));
+        } else {
+            return operatorsOnly(s.substr(1));
+        }
+    }
+
 }
 
-/* 
- * TODO: Replace this comment with a descriptive function
- * header comment.
- */
+/* Recursively checks to see if the brackets in the string are balance */
 bool checkOperators(string s) {
-    /* TODO: Fill in the remainder of this function. */
-    return false;
+    if (s.length() == 0) {
+        return true;
+    } else {
+        if (s.find("()") != string::npos) {
+            int pos = s.find("()");
+            s = s.substr(0, pos) + s.substr(pos+2);
+            return checkOperators(s);
+        } else if (s.find("[]") != string::npos) {
+            int pos = s.find("[]");
+            s = s.substr(0, pos) + s.substr(pos+2);
+            return checkOperators(s);
+        } else if (s.find("{}") != string::npos) {
+            int pos = s.find("{}");
+            s = s.substr(0, pos) + s.substr(pos+2);
+            return checkOperators(s);
+        } else {
+            return false;
+        }
+    }
 }
 
 /* 
@@ -54,6 +73,20 @@ PROVIDED_TEST("operatorsOnly on example from writeup") {
     EXPECT_EQUAL(operatorsOnly(example), only);
 }
 
+STUDENT_TEST("Additional tests to validate operatorsOnly") {
+    string example = "A fjas - , fasjf 0 Hfjsf { fha> aj] fds(";
+    string only = "{](";
+    EXPECT_EQUAL(operatorsOnly(example), only);
+
+    string example1 = "{}[]()[)(]{}[]";
+    string only1 ="{}[]()[)(]{}[]";
+    EXPECT_EQUAL(operatorsOnly(example1), only1);
+
+    string example2 = "";
+    string only2 = "";
+    EXPECT_EQUAL(operatorsOnly(example2), only2);
+
+}
 PROVIDED_TEST("checkOperators on example from writeup") {
     string only = "(){([])(())}";
     EXPECT(checkOperators(only));
@@ -68,4 +101,16 @@ PROVIDED_TEST("isBalanced on illegal examples from writeup") {
     EXPECT(!isBalanced("( ( [ a ] )"));
     EXPECT(!isBalanced("3 ) ("));
     EXPECT(!isBalanced("{ ( x } y )"));
+}
+
+STUDENT_TEST("Additional tests to validate chechOperators") {
+    string example = "{](";
+    EXPECT(!isBalanced(example));
+    string example2 = "[({}{[]})]";
+    EXPECT(isBalanced(example2));
+    string example3 = "[({}}{[]})]";
+    EXPECT(!isBalanced(example3));
+    string example4 = "[]{}()[({})]{}";
+    EXPECT(isBalanced(example4));
+
 }
