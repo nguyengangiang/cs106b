@@ -26,7 +26,16 @@ void fillBlackTriangle(GWindow& window, GPoint one, GPoint two, GPoint three) {
  * header comment.
  */
 void drawSierpinskiTriangle(GWindow& window, GPoint one, GPoint two, GPoint three, int order) {
-    /* TODO: Fill in the remainder of this function. */
+    if (order < 0) {
+        error("Order should not be less than 0");
+    }
+    if (order == 0) {
+        return fillBlackTriangle(window, one, two, three);
+    } else {
+        drawSierpinskiTriangle(window, one, {((one.getX() + two.getX()) / 2), (one.getY() + two.getY()) / 2}, {((one.getX() + three.getX()) / 2), ((one.getY() + three.getY()) / 2)}, order - 1);
+        drawSierpinskiTriangle(window, {((one.getX() + two.getX()) / 2), ((one.getY() + two.getY()) / 2)}, two, {((three.getX() + two.getX()) / 2), ((three.getY() + two.getY()) / 2)}, order - 1);
+        drawSierpinskiTriangle(window,{((one.getX() + three.getX()) / 2), ((one.getY() + three.getY()) / 2)}, {((three.getX() + two.getX()) / 2), ((three.getY() + two.getY()) / 2)}, three, order - 1);
+    }
 }
 
 /* * * * * * Test Cases * * * * * */
