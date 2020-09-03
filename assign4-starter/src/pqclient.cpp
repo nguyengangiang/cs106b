@@ -30,8 +30,36 @@ void pqSort(Vector<DataPoint>& v) {
  * delete this comment.
  */
 Vector<DataPoint> topK(istream& stream, int k) {
-    /* TODO: Fill in the remainder of this function. */
-    return {};
+    DataPoint point;
+    PQSortedArray pq;
+    Vector<DataPoint> v;
+    if (k == 0) {
+        return {};
+    }
+
+    while (stream >> point) {
+        pq.enqueue(point);
+    }
+    int size = pq.size();
+    Vector<DataPoint> temp (size);
+    for (int i = pq.size() - 1; i >= 0; i--) {
+        temp[i] = pq.dequeue();
+    }
+
+    if (k > size) {
+        if (size > 0) {
+            for (int i = 0; i < size; i++) {
+                v.add(temp[i]);
+            }
+        } else {
+            return {};
+        }
+    } else {
+        for (int i = 0; i < k; i++) {
+            v.add(temp[i]);
+        }
+    }
+    return v;
 }
 
 
@@ -59,10 +87,22 @@ stringstream asStream(int start, int stop) {
 
 /* TODO: Add your own custom tests here! */
 
+STUDENT_TEST("Testing topK with negative values") {
+    Vector<DataPoint> vec;
+    for (int i = -10; i < 10; i++) vec.add({ "", i });
+    stringstream stream = asStream(vec);
+    Vector<DataPoint> expected = { { "" , 9 } };
+    EXPECT_EQUAL(topK(stream, 1),expected);
+}
 
 
-
-
+STUDENT_TEST("K is greater than the number of elements in the vector") {
+    Vector<DataPoint> vec;
+    for (int i = 0; i < 3; i++) vec.add({ "", i });
+    stringstream stream = asStream(vec);
+    Vector<DataPoint> expected = { { "" , 2 }, { "" , 1 }, { "" , 0 } };
+    EXPECT_EQUAL(topK(stream, 11), expected);
+}
 
 
 
@@ -100,7 +140,7 @@ PROVIDED_TEST("Time operation pqSort") {
 
 
 /* Constant used for sizing the tests below this point. */
-const int kMany = 100000;
+const int kMany = 10000;
 
 PROVIDED_TEST("Provided Test: Stream 0 elements, ask for top 0") {
     stringstream stream = asStream({});
@@ -269,7 +309,7 @@ PROVIDED_TEST("Provided Test: Stream many elements, ask for top 5") {
     EXPECT_EQUAL(topK(stream, 5), expected);
 }
 
-PROVIDED_TEST("Provided Test: Stress Test – many elements with random values") {
+PROVIDED_TEST("Provided Test: Stress Test – many elements with random values") {
     Vector<int> sorted;
     Vector<DataPoint> points;
     for (int i = 0; i < 10000; i++) {
@@ -288,7 +328,7 @@ PROVIDED_TEST("Provided Test: Stress Test – many elements with random values"
     }
 }
 
-PROVIDED_TEST("Provided Test: Stress Test – Stream many elements, ask for top half. May take >5 minutes on some computers.") {
+PROVIDED_TEST("Provided Test: Stress Test – Stream many elements, ask for top half. May take >5 minutes on some computers.") {
     stringstream stream = asStream(1, kMany);
     Vector<DataPoint> result = topK(stream, kMany/2);
     EXPECT_EQUAL(result.size(), kMany/2);
@@ -297,7 +337,7 @@ PROVIDED_TEST("Provided Test: Stress Test – Stream many elements, ask for top
 }
 
 PROVIDED_TEST("Provided Test: Time operation top-k") {
-    int startSize = 200000;
+    int startSize = 1000;
     int k = 10;
     for (int n = startSize; n < 10*startSize; n *= 2) {
         Vector<DataPoint> input;
