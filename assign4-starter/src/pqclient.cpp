@@ -9,7 +9,7 @@ using namespace std;
 
 /* Using the Priority Queue data structure as a tool to sort, neat! */
 void pqSort(Vector<DataPoint>& v) {
-    PQSortedArray pq;
+    PQHeap pq;
 
     /* Add all the elements to the priority queue. */
     for (int i = 0; i < v.size(); i++) {
@@ -31,7 +31,7 @@ void pqSort(Vector<DataPoint>& v) {
  */
 Vector<DataPoint> topK(istream& stream, int k) {
     DataPoint point;
-    PQSortedArray pq;
+    PQHeap pq;
     Vector<DataPoint> v;
     if (k == 0) {
         return {};
@@ -140,7 +140,7 @@ PROVIDED_TEST("Time operation pqSort") {
 
 
 /* Constant used for sizing the tests below this point. */
-const int kMany = 10000;
+const int kMany = 100000;
 
 PROVIDED_TEST("Provided Test: Stream 0 elements, ask for top 0") {
     stringstream stream = asStream({});
@@ -337,7 +337,7 @@ PROVIDED_TEST("Provided Test: Stress Test – Stream many elements, ask for top 
 }
 
 PROVIDED_TEST("Provided Test: Time operation top-k") {
-    int startSize = 1000;
+    int startSize = 100000;
     int k = 10;
     for (int n = startSize; n < 10*startSize; n *= 2) {
         Vector<DataPoint> input;

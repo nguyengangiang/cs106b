@@ -82,6 +82,9 @@ public:
     void printDebugInfo();
 
 private:
+    int numItems;
+    int allocatedCapacity;
+    DataPoint* elements;
     /* TODO: Add whatever fields, types, and helper functions that you'd like! */
 
     /* While not a strict requirement, we strongly recommend implementing the 
@@ -103,6 +106,13 @@ private:
     int getParentIndex(int curIndex);
     int getLeftChildIndex(int curIndex);
     int getRightChildIndex(int curIndex);
+    void expand();
+
+    /* These collection of functions are for recursively bbubbling up and down
+     * to enqueue and dequeue function.
+     */
+    void bubbleUp(int parentIndex, int curIndex);
+    void bubbleDown(int leftChildIndex, int rightChildIndex, int curIndex);
 
     /* Weird C++isms: C++ loves to make copies of things, which is usually a good thing but
      * for the purposes of this assignment requires some C++ knowledge we haven't yet covered.
